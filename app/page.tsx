@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Lang = "ja" | "en";
 
@@ -101,6 +102,7 @@ export default function Home() {
           </p>
         </div>
 
+        {/* 3つのポイントカード */}
         <div className="grid gap-4 sm:grid-cols-3 text-sm sm:text-base">
           <div className="border border-white/15 rounded-2xl p-4 bg-white/5">
             <h3 className="font-semibold mb-2">
@@ -136,6 +138,22 @@ export default function Home() {
                 : "In the first version, we simply show the vision and core rules, and start small experiments with a few creators."}
             </p>
           </div>
+        </div>
+
+        {/* V0 の入り口ボタン */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-center text-sm">
+          <Link
+            href="/prompts"
+            className="inline-flex justify-center px-5 py-2 rounded-full border border-white/40 hover:bg-white hover:text-black transition"
+          >
+            お題を見る（Explore）
+          </Link>
+          <Link
+            href="/prompts/new"
+            className="inline-flex justify-center px-5 py-2 rounded-full border border-white/40 hover:bg-white hover:text-black transition"
+          >
+            お題を出す（Post）
+          </Link>
         </div>
       </section>
     </main>
