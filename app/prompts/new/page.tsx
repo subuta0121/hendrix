@@ -1,147 +1,222 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-type RevenuePattern = "80_20" | "70_30" | "60_40";
+type PromptType = "music_to_video" | "video_to_music";
+type SplitOption = "80_20" | "70_30" | "60_40";
 
 export default function NewPromptPage() {
-  const [title, setTitle] = useState("");
-  const [direction, setDirection] = useState("");
-  const [revenue, setRevenue] = useState<RevenuePattern>("70_30");
+  // ✅ ここが今回の追加：お題タイプ
+  const [promptType, setPromptType] =
+    useState<PromptType>("music_to_video");
+  const [split, setSplit] = useState<SplitOption>("80_20");
   const [useSketch, setUseSketch] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePreview = () => {
+    const typeLabel =
+      promptType === "music_to_video"
+        ? "音楽 → 映像を募集するお題（ボカロP向け）"
+        : "映像 → 音楽を募集するお題";
 
-    const revenueText =
-      revenue === "80_20"
+    const splitLabel =
+      split === "80_20"
         ? "お題クリエイター 80% / コラボクリエイター 20%"
-        : revenue === "70_30"
+        : split === "70_30"
         ? "お題クリエイター 70% / コラボクリエイター 30%"
         : "お題クリエイター 60% / コラボクリエイター 40%";
 
     alert(
       [
-        "※ まだデモ段階（V0）です。",
+        "※ まだテスト段階（V0）です。",
         "",
-        `■ 楽曲タイトル`,
-        title || "(未入力)",
+        `・お題タイプ: ${typeLabel}`,
+        `・収益分配: ${splitLabel}`,
+        `・ソロAIスケッチ: ${useSketch ? "ON" : "OFF"}`,
         "",
-        `■ 映像への要望・NG表現`,
-        direction || "(未入力)",
-        "",
-        `■ 収益分配（お題クリエイター / コラボクリエイター）`,
-        revenueText,
-        "",
-        `■ ソロAIスケッチを使う？`,
-        useSketch ? "ON（仮PVをAIでつくる）" : "OFF（AIスケッチなし）",
+        "※ 実際の保存やAI生成はまだ動きません。",
       ].join("\n")
     );
   };
 
-  return (
-    <main className="min-h-screen bg-black text-white px-4 py-8">
-      <div className="max-w-xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold">音楽からお題をつくる</h1>
+  const isMusicToVideo = promptType === "music_to_video";
 
-        <p className="text-sm text-white/70 leading-relaxed">
-          あなたが作った音楽を「お題」として公開し、
-          映像のコラボクリエイターを募集します。
-          ここでの入力内容は、まだ V0 のテスト用で実際には保存されません。
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <div className="max-w-3xl mx-auto py-12 px-4 space-y-8">
+        {/* トップへ戻る */}
+        <div className="mb-4">
+          <Link href="/" className="text-sm underline">
+            ← トップへ戻る
+          </Link>
+        </div>
+
+        <h1 className="text-2xl md:text-3xl font-semibold mb-2">
+          お題をつくる（ダミー）
+        </h1>
+        <p className="text-sm text-white/70 mb-6">
+          ここからお題クリエイターが「お題」を出します。
+          まだ保存機能はなく、見た目だけのテスト画面です。
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 楽曲タイトル */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold">
-              楽曲タイトル <span className="text-red-400 text-xs">（必須）</span>
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="例）夜の高速道路 - demo"
-              className="w-full rounded-md bg-white/5 border border-white/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/40"
-            />
-          </div>
-
-          {/* 映像への方向性・NG表現 */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold">
-              映像に求める方向性や NG 表現があれば記載してください
-            </label>
-            <textarea
-              value={direction}
-              onChange={(e) => setDirection(e.target.value)}
-              rows={5}
-              placeholder={`例）\n・夜の都会の雰囲気で\n・抽象的な形やグリッチ映像OK\n・実写NG、血や暴力表現NG`}
-              className="w-full rounded-md bg-white/5 border border-white/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/40"
-            />
-          </div>
-
-          {/* 収益分配パターン */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold">
-              収益分配（お題クリエイター / コラボクリエイター）
-            </label>
+        <form className="space-y-8">
+          {/* ① お題タイプ選択 */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">お題のタイプ</p>
             <p className="text-xs text-white/60">
-              将来この作品が収益を生んだ場合の分配割合です。
-              まずは3パターンから選べるようにしています。
+              まずは「音楽はある → 映像を募集」のモードからスタートします。
+              「映像から音楽」は将来追加予定です。
             </p>
-            <div className="grid grid-cols-1 gap-2 text-xs">
+
+            <div className="grid gap-2 md:grid-cols-2">
+              {/* 音楽 → 映像（有効） */}
               <button
                 type="button"
-                onClick={() => setRevenue("80_20")}
+                onClick={() => setPromptType("music_to_video")}
                 className={
-                  "flex items-center justify-between rounded-md border px-3 py-2 " +
-                  (revenue === "80_20"
+                  "rounded-xl border px-4 py-3 text-left text-xs md:text-sm transition " +
+                  (isMusicToVideo
                     ? "border-white bg-white text-black"
-                    : "border-white/20 bg-white/5 text-white/80")
+                    : "border-white/30 hover:border-white")
                 }
               >
-                <span>お題クリエイター 80% / コラボクリエイター 20%</span>
-                <span className="text-[10px] opacity-70">A が強め</span>
+                <p className="font-semibold mb-1">
+                  音楽から映像を募集する
+                </p>
+                <p className="text-xs opacity-80">
+                  ボカロP / トラックメイカー向け。
+                  楽曲はあるが、MVやループ映像をつけてほしいとき。
+                </p>
               </button>
 
+              {/* 映像 → 音楽（Coming Soon） */}
               <button
                 type="button"
-                onClick={() => setRevenue("70_30")}
-                className={
-                  "flex items-center justify-between rounded-md border px-3 py-2 " +
-                  (revenue === "70_30"
-                    ? "border-white bg-white text-black"
-                    : "border-white/20 bg-white/5 text-white/80")
+                onClick={() =>
+                  alert(
+                    "「映像から音楽を募集する」モードは今後追加予定です。V0ではまだ使えません。"
+                  )
                 }
+                className="rounded-xl border border-white/15 px-4 py-3 text-left text-xs md:text-sm opacity-50 cursor-not-allowed"
               >
-                <span>お題クリエイター 70% / コラボクリエイター 30%</span>
-                <span className="text-[10px] opacity-70">標準</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRevenue("60_40")}
-                className={
-                  "flex items-center justify-between rounded-md border px-3 py-2 " +
-                  (revenue === "60_40"
-                    ? "border-white bg-white text-black"
-                    : "border-white/20 bg-white/5 text-white/80")
-                }
-              >
-                <span>お題クリエイター 60% / コラボクリエイター 40%</span>
-                <span className="text-[10px] opacity-70">ほぼ共作</span>
+                <p className="font-semibold mb-1">
+                  映像から音楽を募集する（Coming Soon）
+                </p>
+                <p className="text-xs opacity-80">
+                  無音の映像に、誰かがBGMや効果音をつけるモード。
+                  今後のアップデートで対応予定です。
+                </p>
               </button>
             </div>
           </div>
 
-          {/* ソロAIスケッチ ON/OFF */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold">
-              ソロAIスケッチ（仮PV）の利用
-            </label>
+          {/* ② タイトル ＆ 希望内容：タイプによってラベルだけ変える */}
+          <div className="space-y-6">
+            {/* タイトル */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">
+                {isMusicToVideo ? "楽曲タイトル" : "映像タイトル"}
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-lg bg-black border border-white/20 px-3 py-2 text-sm"
+                placeholder={
+                  isMusicToVideo
+                    ? "例：AIで作ったローファイ曲に、宇宙系の映像をつけてほしい"
+                    : "例：AIで作ったグリッチ映像に、ビートとSFXをつけてほしい"
+                }
+              />
+            </div>
+
+            {/* 希望・NG */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold">
+                {isMusicToVideo
+                  ? "映像に求める方向性・NG表現（任意）"
+                  : "音楽に求める方向性・NG表現（任意）"}
+              </label>
+              <textarea
+                className="w-full rounded-lg bg-black border border-white/20 px-3 py-2 text-sm min-h-[120px]"
+                placeholder={
+                  isMusicToVideo
+                    ? `例）
+抽象的な形やグリッチ映像OK
+実写NG、血や暴力表現NG など`
+                    : `例）
+ローファイ／アンビエント希望
+シャウト系ボーカルNG、過度に明るいアイドルソングNG など`
+                }
+              />
+            </div>
+          </div>
+
+          {/* ③ 収益分配 */}
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold">
+                収益分配（お題クリエイター / コラボクリエイター）
+              </p>
+              <p className="text-xs text-white/60">
+                将来この作品が収益を生んだ場合の分配割合です。
+                まずは3パターンから選べるようにしています。
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => setSplit("80_20")}
+                className={
+                  "w-full rounded-full border px-4 py-2 text-left text-sm transition " +
+                  (split === "80_20"
+                    ? "border-white bg-white text-black"
+                    : "border-white/30 hover:border-white")
+                }
+              >
+                お題クリエイター 80% / コラボクリエイター 20%
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSplit("70_30")}
+                className={
+                  "w-full rounded-full border px-4 py-2 text-left text-sm transition " +
+                  (split === "70_30"
+                    ? "border-white bg-white text-black"
+                    : "border-white/30 hover:border-white")
+                }
+              >
+                お題クリエイター 70% / コラボクリエイター 30%
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSplit("60_40")}
+                className={
+                  "w-full rounded-full border px-4 py-2 text-left text-sm transition " +
+                  (split === "60_40"
+                    ? "border-white bg-white text-black"
+                    : "border-white/30 hover:border-white")
+                }
+              >
+                お題クリエイター 60% / コラボクリエイター 40%
+              </button>
+            </div>
+          </div>
+
+          {/* ④ ソロAIスケッチ */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">
+              ソロAIスケッチ（仮デモ）の利用
+            </p>
             <p className="text-xs text-white/60">
-              あなたの楽曲に合わせて、AI が 30 秒程度の仮PVを自動生成します。
+              あなたの{isMusicToVideo ? "楽曲" : "映像"}に合わせて、
+              AI が 30 秒程度の仮デモ
+              {isMusicToVideo ? "PV" : "音源"}
+              を自動生成します。
               現時点では、お題クリエイター本人だけが確認できるテスト機能です。
             </p>
+
             <button
               type="button"
               onClick={() => setUseSketch((prev) => !prev)}
@@ -149,18 +224,21 @@ export default function NewPromptPage() {
                 "inline-flex items-center rounded-full border px-4 py-2 text-xs font-medium transition " +
                 (useSketch
                   ? "border-white bg-white text-black"
-                  : "border-white/40 bg-white/5 text-white")
+                  : "border-white/40 text-white hover:border-white")
               }
             >
-              {useSketch ? "ON にする（AIスケッチを使う）" : "OFF にする（AIスケッチなし）"}
+              {useSketch
+                ? "ON にする（AIスケッチを使う）"
+                : "OFF にする（AIスケッチなし）"}
             </button>
           </div>
 
-          {/* 送信ボタン（デモ） */}
+          {/* ⑤ 疑似送信ボタン */}
           <div className="pt-4">
             <button
-              type="submit"
-              className="w-full rounded-full border border-white px-4 py-2 text-sm font-semibold hover:bg-white hover:text-black transition"
+              type="button"
+              onClick={handlePreview}
+              className="w-full rounded-full border border-white px-4 py-3 text-sm font-semibold hover:bg白 hover:text-black transition"
             >
               この内容でお題をプレビュー（デモ）
             </button>
